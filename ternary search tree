@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+//	MUSTAFA FURKAN ARAS 150116019
+typedef struct n{
+	int data;
+	struct n *right;
+	struct n *left;
+	struct n *mid;
+}node;
+ 	node *ekle(node *agac,int x){
+ 	if(agac == NULL){ 
+ 		node *root = (node*)malloc(sizeof(node));
+		 root->left = NULL;
+		 root->mid = NULL;
+		 root->right = NULL; 
+		 root->data = x;
+		 return root;    
+	 }
+	 
+	 if(agac->data > x){
+	 	agac->left = ekle(agac->left,x);
+	 	return agac;
+	 }
+	 if(agac->data < x && (agac->data * agac->data)  >= x){
+	 	agac->mid = ekle(agac->mid,x);
+	 	return agac;
+	 }
+	 if((agac->data * agac->data)  < x){
+	 	agac->right = ekle(agac->right,x);
+	 	return agac;
+	 }
+	 	
+ }
+ 
+ 	node * sil(node *agac,int x){
+ 	if(agac==NULL)
+  		return NULL;
+ 	if(agac->data == x){
+ 		
+  	if(agac->left==NULL && agac->right==NULL && agac->mid == NULL){
+  		return NULL; 
+  }
+
+   	if(agac->left!=NULL){ // first  checking  left side of tree.
+   	agac->data = max(agac->left);
+ 	agac->left = sil(agac->left,max(agac->left));
+  		return agac;
+    }else if(agac->mid!=NULL){ //then middle side.
+    agac->data = agac->mid->data;
+    agac->mid = sil(agac->mid, agac->mid->data);
+    	return agac;
+	}
+ }	//for finding digit that we want to delete.
+	if(agac->data > x){ 
+ 	agac->left=sil(agac->left,x);
+ 		return agac;
+	}else if(agac->data*agac->data > x && agac->data < x){
+	agac->mid = sil(agac->mid,x);
+ 		return agac;
+	}else if(agac->data*agac->data < x){
+	agac->right= sil(agac->right,x);
+ 		return agac;
+	 }
+ 
+ 
+ 
+
+}  
+	int max(node *agac){ //finding maximum.
+	int a;
+ 	while(agac->right!=NULL)
+  	agac=agac->right;
+  	if(agac->mid != NULL){
+  	 a =max(agac->mid);
+  		 return a;
+ 	 } else
+ 		 return agac->data;
+ 
+}
+ 	int min(node *agac){ //finding minimum.
+ 	while(agac->left!=NULL)
+  	agac=agac->left;
+ 		return agac->data;
+}
+	void dolas(node *agac){ // for displaying the tree from left to right.
+ 		if(agac == NULL)
+ 			return;
+ 		dolas(agac->left);
+ 		printf("%d\n",agac->data);
+ 		dolas(agac->mid);
+		dolas(agac->right);
+ 	 }
+ 			 
+ 	int bul(node *agac,int aranan){//if we find what we want return 1 else return -1.
+ 		 	if(agac == NULL)
+ 			 	return -1;
+ 		 	if(agac->data == aranan)
+ 			 	return 1;
+ 		 	if(bul(agac->right,aranan) == 1)
+ 		 		return 1;
+ 		 	if(bul(agac->mid,aranan) == 1)
+ 		 		return 1;
+ 		 	if(bul(agac->left,aranan) == 1)
+ 		 		return 1;
+ 		 return-1;	
+			  }
+			  		
+int main() {
+	
+		node *agac = NULL;
+
+	 FILE* file = fopen ("input.txt.txt", "r");
+  int i = 0;
+  while (!feof(file))
+    {
+	 fscanf (file, "%d", &i);
+      agac = ekle(agac,i);
+      
+    }
+  fclose (file);
+  printf("agacin ilk hali\n"); 
+  	dolas(agac);
+  while(1){//hocam rahat kontrol edebilmeniz için while'a aldim.	
+  	int varmi;
+  	int silme;
+	printf("bulmak istediginiz degeri girin : ");
+  	scanf("%d",&varmi);
+  	printf("(1 ise var -1 ise yok) arama sonucu %d\n",bul(agac,varmi));
+  	printf("silmek istediginiz degeri girin : ");
+  	scanf("%d",&silme);
+  	printf("silinmis hali : \n");
+	sil(agac,silme);
+	dolas(agac);
+  }
+  
+
+
+
+	return 0;
+}
